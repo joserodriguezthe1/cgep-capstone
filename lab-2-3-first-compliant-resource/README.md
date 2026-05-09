@@ -1,0 +1,1 @@
+This module enforces SC-28 (encryption at rest with AES256), AU-3 (S3 access logging to a dedicated log bucket), AU-6 (log bucket retention), CM-6 (mandatory resource tagging), and AC-3 (public access block) on a single S3 bucket.
