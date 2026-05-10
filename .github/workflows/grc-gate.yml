@@ -58,16 +58,16 @@ jobs:
         id: conftest
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: |
-          mkdir -p ../evidence
+          mkdir -p $GITHUB_WORKSPACE/evidence
           {
             echo "["
             FIRST=1
             for ns in compliance.sc28_aws compliance.ac3_aws compliance.cm6_aws compliance.cm6 ; do
               [[ $FIRST -eq 1 ]] && FIRST=0 || printf ","
-              conftest test --policy ../policies --namespace "$ns" --output=json plan.json || true
+              conftest test --policy $GITHUB_WORKSPACE/policies --namespace "$ns" --output=json plan.json || true
             done
             echo "]"
-          } > ../evidence/conftest-results.json
+          } > $GITHUB_WORKSPACE/evidence/conftest-results.json
           python3 -c '
           import json, sys
           d = json.load(open("../evidence/conftest-results.json"))
@@ -97,8 +97,8 @@ jobs:
       - name: Copy plan into evidence
         if: always()
         run: |
-          cp ${{ env.TF_WORKING_DIR }}/plan.json evidence/plan.json
-          cp ${{ env.TF_WORKING_DIR }}/plan.txt  evidence/plan.txt
+          cp ${{ env.TF_WORKING_DIR }}/plan.json $GITHUB_WORKSPACE/evidence/plan.json
+          cp ${{ env.TF_WORKING_DIR }}/plan.txt  $GITHUB_WORKSPACE/evidence/plan.txt
 
       - name: Upload evidence artifact
         if: always()
