@@ -82,6 +82,7 @@ jobs:
         run: |
           mkdir -p $GITHUB_WORKSPACE/evidence
           tfsec . --format sarif --out $GITHUB_WORKSPACE/evidence/tfsec.sarif --config-file $GITHUB_WORKSPACE/.tfsec/config.yml || true
+          cat $GITHUB_WORKSPACE/evidence/tfsec.sarif
           python3 -c '
           import json, sys, os
           path = os.path.join(os.environ["GITHUB_WORKSPACE"], "evidence", "tfsec.sarif")
