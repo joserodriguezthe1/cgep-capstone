@@ -27,7 +27,7 @@ ACTUAL=$(shasum -a 256 "${BUNDLE}" | awk '{print $1}')
 [[ "$EXPECTED" == "$ACTUAL" ]] || { echo "FAIL: SHA mismatch"; exit 1; }
 
 # 2. Authenticity + timestamp
-cosign verify-blob \
+~/cosign.exe verify-blob \
   --bundle "${BUNDLE}.sig.bundle" \
   --certificate-identity-regexp '.*' \
   --certificate-oidc-issuer 'https://token.actions.githubusercontent.com' \
