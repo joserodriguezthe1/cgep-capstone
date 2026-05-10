@@ -1,4 +1,3 @@
-# .github/workflows/grc-gate.yml
 name: grc-gate
 
 on:
@@ -7,14 +6,13 @@ on:
   workflow_dispatch:
 
 permissions:
-  id-token: write       # required for AWS OIDC + Cosign keyless (Lab 4.4)
+  id-token: write
   contents: read
-  pull-requests: write  # required to comment on the PR
+  pull-requests: write
 
 env:
   AWS_REGION: us-east-1
   TF_WORKING_DIR: lab-2-3-first-compliant-resource/terraform/primitives/compliant-s3
-
   TF_VAR_environment: dev
   TF_VAR_project_name: compliant-s3-demo
 
@@ -81,10 +79,11 @@ jobs:
         if: always()
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: |
-          tfsec . --format sarif --out ../evidence/tfsec.sarif || true
+          mkdir -p $GITHUB_WORKSPACE/evidence
+          tfsec . --format sarif --out $GITHUB_WORKSPACE/evidence/tfsec.sarif || true
           python3 -c '
           import json, sys
-          d = json.load(open("../evidence/tfsec.sarif"))
+          d = json.load(open("$GITHUB_WORKSPACE/evidence/tfsec.sarif"))
           high = sum(
               1 for run in d.get("runs", [])
               for r in run.get("results", [])
@@ -98,7 +97,7 @@ jobs:
         if: always()
         run: |
           cp ${{ env.TF_WORKING_DIR }}/plan.json $GITHUB_WORKSPACE/evidence/plan.json
-          cp ${{ env.TF_WORKING_DIR }}/plan.txt  $GITHUB_WORKSPACE/evidence/plan.txt
+          cp ${{ env.TF_WORKING_DIR }}/plan.txt $GITHUB_WORKSPACE/evidence/plan.txt
 
       - name: Upload evidence artifact
         if: always()
