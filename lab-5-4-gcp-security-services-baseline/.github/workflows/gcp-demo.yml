@@ -1,0 +1,25 @@
+name: gcp-wif-demo
+
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  gcp-auth:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Authenticate to GCP via WIF
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: projects/12846951466/locations/global/workloadIdentityPools/github-actions/providers/github
+          service_account: cgep-grc-gate-sa@project-5ff1b0f7-ade0-446d-b22.iam.gserviceaccount.com
+
+      - name: Verify GCP access (no keys used)
+        run: |
+          gcloud auth list
+          gcloud storage ls
